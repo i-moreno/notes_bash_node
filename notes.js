@@ -1,16 +1,12 @@
 const fs = require('fs');
 const chalk = require('chalk');
 
-function getNotes() {
-  return 'Your notes...'
-}
-
 function addNote(title, body) {
   const notes = loadNotes();
   const note = { title, body };
-  const duplicatedNote = notes.filter(note => note.title === title);
+  const duplicatedNote = notes.find(note => note.title === title);
 
-  if (!duplicatedNote.length) {
+  if (!duplicatedNote) {
     notes.push(note);
     saveNotes(notes);
   } else {
@@ -26,6 +22,19 @@ function removeNote(title) {
     saveNotes(remainingNotes);
   } else {
     console.log(chalk.yellow.bold(`There is not a note with title: ${title}.\nIt could have already been deleted before or never existed.`))
+  }
+}
+
+function readNote(noteTitle) {
+  const notes = loadNotes();
+  const findNote = notes.find(note => note.title === noteTitle);
+
+  if (findNote) {
+    console.log(chalk.cyan.inverse.bold(`*** ${findNote.title} ***`));
+    console.log(chalk.bold(`\n${findNote.body}\n`));
+    console.log(chalk.cyan.inverse.bold(`*************************`));
+  } else {
+    console.log(chalk.red.inverse.bold(`There is not a note with the title: ${noteTitle}`))
   }
 }
 
@@ -59,9 +68,9 @@ function loadNotes() {
 }
 
 module.exports = {
-  getNotes: getNotes,
   addNote: addNote,
   removeNote: removeNote,
-  showNotes: showNotes
+  showNotes: showNotes,
+  readNote: readNote
 };
 
